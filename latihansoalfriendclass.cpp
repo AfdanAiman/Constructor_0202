@@ -33,11 +33,13 @@ private:
     string penulis;
     bool dipinjam;
 public:
+    void setJudul(string pJudul);
+    void setPenulis(string pPenulis);
+    void setDipinjam(bool pDipinjam);
     void prosesPinjam(Buku* b, Peminjam* p);
     void prosesKembali(Buku* b);
     friend class Petugas;
 };
-
 class Peminjam
 {
     private:
@@ -45,10 +47,24 @@ class Peminjam
     public:
         string nama;
         string id;
+        void setTotalPinjaman(int jumlah) { totalPinjaman = jumlah; }
         void prosesPinjam(Buku* b, Peminjam* p);
         void prosesKembali(Buku* b);
         friend class Petugas;
+        friend class Admin;
 };
+void Buku::setJudul(string pJudul)
+{
+    judul = pJudul;
+}
+void Buku::setPenulis(string pPenulis)
+{
+    penulis = pPenulis;
+}
+void Buku::setDipinjam(bool pDipinjam)
+{
+    dipinjam = pDipinjam;
+}
 
 class Petugas
 {
@@ -57,10 +73,53 @@ class Petugas
         string id;
         string levelAkses;
     public:
+        void setNama(string pNama);
+        void setId(string pId);
+        void setLevelAkses(string pLevelAkses);
         void prosesPinjam(Buku* b, Peminjam* p);
         void prosesKembali(Buku* b);
         friend class Admin;
 };
+void Petugas::setNama(string pNama)
+{
+    nama = pNama;
+}
+void Petugas::setId(string pId)
+{
+    id = pId;
+}
+void Petugas::setLevelAkses(string pLevelAkses)
+{
+    levelAkses = pLevelAkses;
+}
+void Petugas::prosesPinjam(Buku* b, Peminjam* p)
+{
+    if (b->dipinjam == false)
+    {
+        b->dipinjam = true;
+        p->totalPinjaman++;
+        cout << "Buku " << b->judul << " berhasil dipinjam oleh " << p->nama << endl;
+        cout << "Total Pinjaman: " << p->totalPinjaman << endl;
+
+    }
+    else
+    {
+        cout << "Buku " << b->judul << " sudah dipinjam." << endl;
+        
+    }
+}
+void Petugas::prosesKembali(Buku* b)
+{
+    if (b->dipinjam == true)
+    {
+        b->dipinjam = false;
+        cout << "Buku " << b->judul << " berhasil dikembalikan." << endl;
+    }
+    else
+    {
+        cout << "Buku " << b->judul << " tidak sedang dipinjam." << endl;
+    }
+}
 
 class Admin
 {
@@ -68,9 +127,60 @@ class Admin
         string nama;
         string id;
     public:
+        void setNama(string pNama) { nama = pNama; }
+        void setId(string pId) { id = pId; }
         void lihatStatistik(Peminjam* p);
         void lihatBukuDiproses(Petugas* t);
+        friend void Petugas::prosesPinjam(Buku* b, Peminjam* p);
+        friend void Petugas::prosesKembali(Buku* b);
 };
+void Admin::lihatStatistik(Peminjam* p)
+{
+    cout << "Peminjam: " << p->nama << endl;
+    cout << "ID Peminjam: " << p->id << endl;
+    cout << "Total Pinjaman: " << p->totalPinjaman << endl;
+}
+void Admin::lihatBukuDiproses(Petugas* t)
+{
+    cout << "Petugas: " << t->nama << endl;
+    cout << "ID Petugas: " << t->id << endl;
+    cout << "Level Akses: " << t->levelAkses << endl;
+}
+int main()
+{
+    Buku a;
+    a.setJudul("Atomics");
+    a.setPenulis("James Clear");
+    a.setDipinjam(false);
+
+    Peminjam p;
+    p.nama = "uwik";
+    p.id = "TI23";
+    p.setTotalPinjaman(0);
+
+    Petugas t;
+    t.setNama("ambon");
+    t.setId("TI24");
+    Admin a1;
+    a1.setNama("Admin User");
+    a1.setId("A001");
+
+    t.prosesPinjam(&a, &p);
+    a1.lihatStatistik(&p);
+    t.prosesKembali(&a);
+    a1.lihatBukuDiproses(&t);
+    t.prosesKembali(&a);
+    a1.lihatBukuDiproses(&t);
+    t.prosesPinjam(&a, &p);
+    a1.lihatStatistik(&p);
+    t.prosesKembali(&a);
+    a1.lihatBukuDiproses(&t);
+    t.prosesKembali(&a); 
+    
+    return 0;
+}
+
+// selesai
 
 
 

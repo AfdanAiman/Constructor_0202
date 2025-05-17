@@ -23,4 +23,7 @@ mahasiswa :: mahasiswa(){
  nim=iNim;
  }
 
+ mahasiswa :: mahasiswa(string iNama){
+ nama=iNama;
+ }
 
